@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/supplyon/gremcos/interfaces"
+	"github.com/ameena3/gremcos/interfaces"
 )
 
 var benchmarkClient interfaces.QueryExecutor

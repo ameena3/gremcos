@@ -9,12 +9,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
+	mock_interfaces "github.com/ameena3/gremcos/test/mocks/interfaces"
 	"github.com/golang/mock/gomock"
 	gorilla "github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/supplyon/gremcos/interfaces"
-	mock_interfaces "github.com/supplyon/gremcos/test/mocks/interfaces"
 )
 
 func TestNewWebsocket(t *testing.T) {
@@ -71,8 +71,6 @@ func TestConnect(t *testing.T) {
 	assert.True(t, websocket.IsConnected())
 }
 
-
-
 func TestConnectFail(t *testing.T) {
 	// GIVEN
 	mockCtrl := gomock.NewController(t)
@@ -113,7 +111,6 @@ func TestConnectReconnect(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, websocket.IsConnected())
 	assert.True(t, websocket.connected.Load())
-
 
 	// WHEN - second connect fails
 	websocket.wsDialerFactory = newMockedDialerFactory(mockedWebsocketConnection, true)
@@ -379,17 +376,17 @@ func TestConcurrentWriteAndCloseOnConnection(t *testing.T) {
 
 	sending := false
 
-	mockedWebsocketConnection.EXPECT().WriteMessage(gomock.Any(),gomock.Any()).MinTimes(1).Do(func(dataType interface{},data interface{}) error {
-		require.False(t,sending)
+	mockedWebsocketConnection.EXPECT().WriteMessage(gomock.Any(), gomock.Any()).MinTimes(1).Do(func(dataType interface{}, data interface{}) error {
+		require.False(t, sending)
 		sending = true
-		time.Sleep(time.Millisecond*500)
+		time.Sleep(time.Millisecond * 500)
 		sending = false
 		return nil
 	})
 	mockedWebsocketConnection.EXPECT().Close().MinTimes(1).Do(func() error {
-		require.False(t,sending)
+		require.False(t, sending)
 		sending = true
-		time.Sleep(time.Millisecond*1)
+		time.Sleep(time.Millisecond * 1)
 		sending = false
 		return nil
 	})
@@ -398,12 +395,12 @@ func TestConcurrentWriteAndCloseOnConnection(t *testing.T) {
 	require.NoError(t, err)
 
 	go func() {
-			_ = websocket.Write([]byte("HUHU"))
+		_ = websocket.Write([]byte("HUHU"))
 	}()
 
-	time.Sleep(time.Millisecond*50)
+	time.Sleep(time.Millisecond * 50)
 	websocket.Close()
 
-	time.Sleep(time.Millisecond*50)
+	time.Sleep(time.Millisecond * 50)
 
 }

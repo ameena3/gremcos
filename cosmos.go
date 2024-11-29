@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/rs/zerolog"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 // Cosmos is an abstraction of the CosmosDB
@@ -92,12 +92,16 @@ func WithAuth(username string, password string) Option {
 // WithResourceTokenAuth sets credential provider that is used to authenticate the requests to cosmos.
 // With this approach dynamic credentials (cosmos resource tokens) can be used for authentication.
 // To do this you have to provide a CredentialProvider implementation that takes care for providing a valid (not yet expired) resource token
+//
 //	myResourceTokenProvider := MyDynamicCredentialProvider{}
 //	New("wss://example.com", WithResourceTokenAuth(myResourceTokenProvider))
 //
 // If you want to use static credentials (primary-/ secondary cosmos key as password) instead you can either use "WithAuth".
+//
 //	New("wss://example.com", WithAuth("username","primary-key"))
+//
 // Or you use the default implementation for a static credential provider "StaticCredentialProvider"
+//
 //	staticCredProvider := StaticCredentialProvider{UsernameStatic: "username", PasswordStatic: "primary-key"}
 //	New("wss://example.com", WithResourceTokenAuth(staticCredProvider))
 func WithResourceTokenAuth(credentialProvider CredentialProvider) Option {
@@ -166,7 +170,8 @@ func wsGenerator(wsGenerator websocketGeneratorFun) Option {
 // AutomaticRetries tries to retry failed requests, if appropriate. Retries are limited to maxRetries. Retrying is stopped after timeout is reached.
 // Appropriate error codes are 409, 412, 429, 1007, 1008 see https://docs.microsoft.com/en-us/azure/cosmos-db/graph/gremlin-headers#status-codes
 // Hint: Be careful when specifying the values for maxRetries and timeout. They influence how much latency is added on requests that need to be retried.
-//       For example if maxRetries = 1 and timeout = 1s the call might take 1s longer to return a potential persistent error.
+//
+//	For example if maxRetries = 1 and timeout = 1s the call might take 1s longer to return a potential persistent error.
 func AutomaticRetries(maxRetries int, timeout time.Duration) Option {
 	return func(c *cosmosImpl) {
 		if maxRetries > 0 {

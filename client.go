@@ -8,8 +8,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/pkg/errors"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 // socketClosedByServerError is not really an error since this usually happens when the socket is closed by the peer.

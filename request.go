@@ -60,7 +60,7 @@ func prepareRequestWithBindings(query string, bindings, rebindings map[string]in
 	return req, req.RequestID, nil
 }
 
-//prepareAuthRequest creates a ws request for Gremlin Server
+// prepareAuthRequest creates a ws request for Gremlin Server
 func prepareAuthRequest(requestID string, username string, password string) request {
 	req := request{}
 	req.RequestID = requestID

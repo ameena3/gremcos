@@ -1,5 +1,3 @@
-Copyright for portions of project `gremcos` are held by [Marcus Engvall, 2016] as part of project `gremgo` and [Phil Schwartz, 2018] as part of the project `gremtune`. All other copyright for project `gremcos` are held by [SupplyOn AG, 2020].
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.

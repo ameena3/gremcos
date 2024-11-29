@@ -11,7 +11,7 @@ func TestNewStubHistogram(t *testing.T) {
 	histogram := NewStubHistogram()
 
 	// THEN
-	assert.Equal(t, histogram,nopHistogram)
+	assert.Equal(t, histogram, nopHistogram)
 }
 
 func TestObserve(t *testing.T) {
@@ -41,5 +41,5 @@ func TestWithLabelValues(t *testing.T) {
 	histogram := histogramVec.WithLabelValues("test", "values")
 
 	// THEN
-	assert.Equal(t, histogram,nopHistogram)
+	assert.Equal(t, histogram, nopHistogram)
 }

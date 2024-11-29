@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	gorilla "github.com/gorilla/websocket"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 // websocketDialer is a function type for dialing/ connecting to a websocket server and creating a WebsocketConnection

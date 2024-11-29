@@ -2,15 +2,17 @@ package gremcos
 
 import (
 	"fmt"
+	"io"
+
 	"go.uber.org/atomic"
-	"io/ioutil"
+
 	"net/http"
 	"strings"
 	"time"
 
 	"sync"
 
-	"github.com/supplyon/gremcos/interfaces"
+	"github.com/ameena3/gremcos/interfaces"
 
 	gorilla "github.com/gorilla/websocket"
 )
@@ -136,7 +138,7 @@ func extractConnectionError(resp *http.Response) error {
 		return errMinimal
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errMinimal
 	}

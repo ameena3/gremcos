@@ -7,9 +7,9 @@ import (
 	"syscall"
 	"time"
 
+	gremcos "github.com/ameena3/gremcos"
+	"github.com/ameena3/gremcos/api"
 	"github.com/rs/zerolog"
-	gremcos "github.com/supplyon/gremcos"
-	"github.com/supplyon/gremcos/api"
 )
 
 func main() {

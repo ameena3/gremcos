@@ -1,6 +1,6 @@
-module github.com/supplyon/gremcos
+module github.com/ameena3/gremcos
 
-go 1.18
+go 1.23
 
 require (
 	github.com/gofrs/uuid v3.2.0+incompatible

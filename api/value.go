@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/supplyon/gremcos/interfaces"
+	"github.com/ameena3/gremcos/interfaces"
 )
 
 type value struct {

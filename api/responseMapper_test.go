@@ -3,8 +3,8 @@ package api
 import (
 	"testing"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/stretchr/testify/assert"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 func createTestResponse(data string) ResponseArray {

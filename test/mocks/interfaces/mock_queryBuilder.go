@@ -7,9 +7,9 @@ package mock_interfaces
 import (
 	reflect "reflect"
 
+	interfaces "github.com/ameena3/gremcos/interfaces"
 	uuid "github.com/gofrs/uuid"
 	gomock "github.com/golang/mock/gomock"
-	interfaces "github.com/supplyon/gremcos/interfaces"
 )
 
 // MockQueryBuilder is a mock of QueryBuilder interface.

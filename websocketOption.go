@@ -7,28 +7,28 @@ import (
 // optionWebsocket is the struct for defining configuration for WebSocket dialer
 type optionWebsocket func(*websocket)
 
-//SetTimeout sets the dial handshake timeout
+// SetTimeout sets the dial handshake timeout
 func SetTimeout(timeout time.Duration) optionWebsocket {
 	return func(ws *websocket) {
 		ws.timeout = timeout
 	}
 }
 
-//SetWritingWait sets the time for waiting that writing occur
+// SetWritingWait sets the time for waiting that writing occur
 func SetWritingWait(wait time.Duration) optionWebsocket {
 	return func(ws *websocket) {
 		ws.writingWait = wait
 	}
 }
 
-//SetReadingWait sets the time for waiting that reading occur
+// SetReadingWait sets the time for waiting that reading occur
 func SetReadingWait(wait time.Duration) optionWebsocket {
 	return func(ws *websocket) {
 		ws.readingWait = wait
 	}
 }
 
-//SetBufferSize sets the read/write buffer size
+// SetBufferSize sets the read/write buffer size
 func SetBufferSize(readBufferSize int, writeBufferSize int) optionWebsocket {
 	return func(ws *websocket) {
 		ws.readBufSize = readBufferSize

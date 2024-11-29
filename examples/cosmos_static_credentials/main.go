@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
+	gremcos "github.com/ameena3/gremcos"
+	"github.com/ameena3/gremcos/api"
 	"github.com/rs/zerolog"
-	gremcos "github.com/supplyon/gremcos"
-	"github.com/supplyon/gremcos/api"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 		gremcos.NumMaxActiveConnections(10),
 		gremcos.ConnectionIdleTimeout(time.Second*30),
 		gremcos.MetricsPrefix("myservice"),
-		gremcos.AutomaticRetries(3,time.Second * 2),
+		gremcos.AutomaticRetries(3, time.Second*2),
 	)
 
 	if err != nil {

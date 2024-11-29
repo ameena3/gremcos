@@ -7,8 +7,8 @@ package mock_metrics
 import (
 	reflect "reflect"
 
+	metrics "github.com/ameena3/gremcos/metrics"
 	gomock "github.com/golang/mock/gomock"
-	metrics "github.com/supplyon/gremcos/metrics"
 )
 
 // MockCounter is a mock of Counter interface.

@@ -7,8 +7,8 @@ package mock_gremcos
 import (
 	reflect "reflect"
 
+	interfaces "github.com/ameena3/gremcos/interfaces"
 	gomock "github.com/golang/mock/gomock"
-	interfaces "github.com/supplyon/gremcos/interfaces"
 )
 
 // MockCosmos is a mock of Cosmos interface.

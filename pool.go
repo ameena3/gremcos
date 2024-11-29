@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/rs/zerolog"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 type QueryExecutorFactoryFunc func() (interfaces.QueryExecutor, error)

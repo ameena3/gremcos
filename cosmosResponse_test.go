@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 func TestExtractFirstError(t *testing.T) {
