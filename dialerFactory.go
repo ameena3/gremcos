@@ -8,6 +8,10 @@ import (
 	gorilla "github.com/gorilla/websocket"
 )
 
+const (
+	OriginHeader = "Origin"
+)
+
 // websocketDialer is a function type for dialing/ connecting to a websocket server and creating a WebsocketConnection
 type websocketDialer func(urlStr string, requestHeader http.Header) (interfaces.WebsocketConnection, *http.Response, error)
 

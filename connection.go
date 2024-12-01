@@ -74,19 +74,19 @@ func NewWebsocket(host string, options ...optionWebsocket) (interfaces.Dialer, e
 
 	// verify setup and fail as early as possible
 	if !strings.HasPrefix(createdWebsocket.host, "ws://") && !strings.HasPrefix(createdWebsocket.host, "wss://") {
-		return nil, fmt.Errorf("Host '%s' is invalid, expected protocol 'ws://' or 'wss://' missing", createdWebsocket.host)
+		return nil, fmt.Errorf("host '%s' is invalid, expected protocol 'ws://' or 'wss://' missing", createdWebsocket.host)
 	}
 
 	if createdWebsocket.readBufSize <= 0 {
-		return nil, fmt.Errorf("Invalid size for read buffer: %d", createdWebsocket.readBufSize)
+		return nil, fmt.Errorf("invalid size for read buffer: %d", createdWebsocket.readBufSize)
 	}
 
 	if createdWebsocket.writeBufSize <= 0 {
-		return nil, fmt.Errorf("Invalid size for write buffer: %d", createdWebsocket.writeBufSize)
+		return nil, fmt.Errorf("invalid size for write buffer: %d", createdWebsocket.writeBufSize)
 	}
 
 	if createdWebsocket.wsDialerFactory == nil {
-		return nil, fmt.Errorf("The factory for websocket dialers is nil")
+		return nil, fmt.Errorf("the factory for websocket dialers is nil")
 	}
 
 	return createdWebsocket, nil
