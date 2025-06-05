@@ -17,7 +17,8 @@ import (
 	gorilla "github.com/gorilla/websocket"
 )
 
-// websocket is the dialer for a WebsocketConnection
+// Deprecated: websocket is part of the original websocket-based implementation.
+// Consider using DialGremlinGo which utilizes the gremlin-go driver.
 type websocket struct {
 	// the host to establish the connection with
 	// it is expected to specify the protocol as part of the host
@@ -55,7 +56,8 @@ type websocket struct {
 	wsDialerFactory websocketDialerFactory
 }
 
-// NewWebsocket returns a WebSocket dialer to use when connecting to Gremlin Server
+// Deprecated: NewWebsocket is part of the original websocket-based implementation.
+// Consider using DialGremlinGo which utilizes the gremlin-go driver.
 func NewWebsocket(host string, options ...optionWebsocket) (interfaces.Dialer, error) {
 	createdWebsocket := &websocket{
 		timeout:         5 * time.Second,

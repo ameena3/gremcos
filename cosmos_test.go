@@ -188,6 +188,68 @@ func TestIsHealthy(t *testing.T) {
 	assert.NoError(t, cosmos.Stop())
 }
 
+
+// TestIsHealthy_WithDrivers tests the IsHealthy method with both native and gremlin-go drivers.
+// This test acts as an integration test as it requires a running Gremlin server.
+func TestIsHealthy_WithDrivers(t *testing.T) {
+	defer goleak.VerifyNone(t, goleak.IgnoreCurrent())
+
+	// testGremlinServerURL should be accessible for these tests.
+	// Ensure a Gremlin server is running at this address.
+	// For the purpose of this example, we'll use the constant defined in gremlingo_client_integration_test.go
+	// but ideally, this would be configured or shared.
+	const localGremlinServerURL = "ws://localhost:8182/gremlin"
+
+
+	driverConfigs := []struct {
+		name         string
+		useGremlinGo bool
+	}{
+		{name: "NativeWebsocket", useGremlinGo: false},
+		{name: "GremlinGoDriver", useGremlinGo: true},
+	}
+
+	for _, dc := range driverConfigs {
+		t.Run(dc.name, func(t *testing.T) {
+			var opts []Option
+			opts = append(opts, WithLogger(zerolog.Nop())) // Use NopLogger to avoid verbose output during tests
+			opts = append(opts, withMetrics(newStubbedMetrics())) // Use stubbed metrics
+
+			if dc.useGremlinGo {
+				opts = append(opts, WithGremlinGo())
+				// For GremlinGo, if the server needs auth, you'd add it here:
+				// opts = append(opts, WithAuth("username", "password")) // Example
+			} else {
+				// For the native client, if it needs specific mock dialer for non-integration setup,
+				// this test would need more complex setup. For this IT version, we let it dial.
+				// To use the default mock dialer for native (if server not up):
+				// opts = append(opts, wsGenerator(websocketGenerator))
+				// However, since this is an integration test, we want it to connect.
+			}
+
+			cosmos, err := New(localGremlinServerURL, opts...)
+			require.NoError(t, err, "New() should not fail for %s", dc.name)
+			require.NotNil(t, cosmos, "Cosmos client should not be nil for %s", dc.name)
+
+			// Test healthy condition
+			// The first call to IsHealthy might establish the connection if not already done by New.
+			healthyErr := cosmos.IsHealthy()
+			assert.NoError(t, healthyErr, "IsHealthy() should succeed for %s with a running server", dc.name)
+
+			// Test unhealthy condition (simulated by stopping the client)
+			err = cosmos.Stop()
+			assert.NoError(t, err, "Stop() should not fail for %s", dc.name)
+
+			// After Stop, IsHealthy should ideally report an error.
+			// Note: IsHealthy for a stopped client might depend on implementation details.
+			// The pool's Ping might return an error if the pool is closed.
+			unhealthyErr := cosmos.IsHealthy()
+			assert.Error(t, unhealthyErr, "IsHealthy() should fail for %s after Stop()", dc.name)
+		})
+	}
+}
+
+
 func TestNewWithMetrics(t *testing.T) {
 	// GIVEN
 	mockCtrl := gomock.NewController(t)

@@ -27,7 +27,8 @@ func (socketClosedErr socketClosedByServerError) Error() string {
 	return fmt.Sprintf("received msgType == -1 this is no frame, closing the readworker %s", detailErrMsg)
 }
 
-// client is a container for the gremcos client.
+// Deprecated: This client struct is part of the original websocket-based implementation.
+// Use DialGremlinGo or New with the WithGremlinGo option for the gremlin-go driver based client, which returns an interfaces.QueryExecutor.
 type client struct {
 
 	// conn is the entity that manages the websocket connection
@@ -75,30 +76,36 @@ type client struct {
 	metrics clientMetrics
 }
 
-// clientOption is the struct for defining optional parameters for the Client
+// Deprecated: clientOption is part of the original websocket-based implementation.
+// For the gremlin-go driver based client, options are of type GremlinGoClientOption.
 type clientOption func(*client)
 
-// SetAuth sets credentials provider for an authenticated connection
+// Deprecated: SetAuth is an option for the original websocket-based client.
+// For the gremlin-go driver based client, use WithGremlinGoAuth.
 func SetAuth(credentialProvider CredentialProvider) clientOption {
 	return func(c *client) {
 		c.credentialProvider = credentialProvider
 	}
 }
 
-// PingInterval sets the ping interval, which is the interval to send the ping frame to the peer
+// Deprecated: PingInterval is an option for the original websocket-based client.
+// The gremlin-go driver manages pings internally.
 func PingInterval(interval time.Duration) clientOption {
 	return func(c *client) {
 		c.pingInterval = interval
 	}
 }
 
-// WithMetrics sets the metrics provider
+// Deprecated: WithMetrics is an option for the original websocket-based client.
+// Metrics integration for the gremlin-go path would require a different approach.
 func WithMetrics(metrics clientMetrics) clientOption {
 	return func(c *client) {
 		c.metrics = metrics
 	}
 }
 
+// Deprecated: newClient is the constructor for the original websocket-based client.
+// Use DialGremlinGo or New with the WithGremlinGo option for the gremlin-go driver based client.
 func newClient(dialer interfaces.Dialer, options ...clientOption) *client {
 	client := &client{
 		conn:                   dialer,
@@ -119,8 +126,8 @@ func newClient(dialer interfaces.Dialer, options ...clientOption) *client {
 	return client
 }
 
-// Dial returns a client for interaction with the Gremlin Server specified in the host IP.
-// The client is already connected.
+// Deprecated: Dial initiates connection for the original websocket-based client.
+// Use DialGremlinGo or New with the WithGremlinGo option for the gremlin-go driver based client.
 func Dial(conn interfaces.Dialer, errorChannel chan error, options ...clientOption) (*client, error) {
 
 	if conn == nil {
