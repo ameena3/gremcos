@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
+	mock_interfaces "github.com/ameena3/gremcos/test/mocks/interfaces"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/supplyon/gremcos/interfaces"
-	mock_interfaces "github.com/supplyon/gremcos/test/mocks/interfaces"
 )
 
 func packedRequest2Request(packedRequest []byte) (request, error) {
@@ -397,7 +397,7 @@ func TestReadWorkerFailOnInvalidFrame(t *testing.T) {
 
 func TestForceCloseOnClosedChannelPanic(t *testing.T) {
 	defer goleak.VerifyNone(t)
-	// This test was added to reproduce https://github.com/supplyon/gremcos/issues/29
+	// This test was added to reproduce https://github.com/ameena3/gremcos/issues/29
 
 	// GIVEN
 	mockCtrl := gomock.NewController(t)
@@ -434,7 +434,7 @@ func TestForceCloseOnClosedChannelPanic(t *testing.T) {
 
 	// Immediately close the client even while there are still requests ongoing
 	// in general that is not a good idea to do that, however this should not result in a
-	// panic as described at https://github.com/supplyon/gremcos/issues/29.
+	// panic as described at https://github.com/ameena3/gremcos/issues/29.
 	client.Close()
 
 	// wait until the execution has been completed

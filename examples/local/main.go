@@ -7,9 +7,9 @@ import (
 	"syscall"
 	"time"
 
+	gremcos "github.com/ameena3/gremcos"
+	"github.com/ameena3/gremcos/api"
 	"github.com/rs/zerolog"
-	gremcos "github.com/supplyon/gremcos"
-	"github.com/supplyon/gremcos/api"
 )
 
 func main() {
@@ -19,10 +19,37 @@ func main() {
 	hostURL := fmt.Sprintf("ws://%s:%d/gremlin", host, port)
 	logger := zerolog.New(os.Stdout).Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: zerolog.TimeFieldFormat}).With().Timestamp().Logger()
 
-	cosmos, err := gremcos.New(hostURL, gremcos.WithLogger(logger), gremcos.NumMaxActiveConnections(10), gremcos.ConnectionIdleTimeout(time.Second*1))
+	var cosmos gremcos.Cosmos
+	var err error
+
+	// // Original way (using gorilla/websocket based client)
+	// logger.Info().Msg("Attempting to connect using original websocket client...")
+	// cosmos, err = gremcos.New(hostURL,
+	// 	gremcos.WithLogger(logger),
+	// 	gremcos.NumMaxActiveConnections(10),
+	// 	gremcos.ConnectionIdleTimeout(time.Second*1),
+	// )
+	// if err != nil {
+	// 	logger.Fatal().Err(err).Msg("Failed to create the cosmos connector (original websocket client)")
+	// }
+	// logger.Info().Msg("Successfully connected using original websocket client.")
+
+	// New way (using gremlin-go driver)
+	logger.Info().Msg("Attempting to connect using gremlin-go driver...")
+	cosmos, err = gremcos.New(hostURL,
+		gremcos.WithLogger(logger),      // Sets logger for the gremcos wrapper
+		gremcos.WithGremlinGo(),         // Enables the gremlin-go driver
+		// gremcos.WithAuth("username", "password"), // Add if your Gremlin server requires authentication
+		// To configure the gremlin-go driver further (e.g. traversal source, specific driver logger):
+		// these would need to be exposed as GremlinGoClientOption and passed to DialGremlinGo,
+		// which might require changes in how `gremcos.New` passes options if it were to support them directly.
+		// For now, `DialGremlinGo` uses defaults or options like `WithGremlinGoAuth` if passed.
+	)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("Failed to create the cosmos connector")
+		logger.Fatal().Err(err).Msg("Failed to create the cosmos connector (gremlin-go driver)")
 	}
+	logger.Info().Msg("Successfully connected using gremlin-go driver.")
+
 
 	exitChannel := make(chan struct{})
 	go processLoop(cosmos, logger, exitChannel)

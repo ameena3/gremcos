@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 type myNetError string // implements net.Error interface

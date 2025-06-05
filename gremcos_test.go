@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/stretchr/testify/suite"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 type SuiteIntegrationTests struct {
@@ -36,7 +36,6 @@ type bulkResponseEntry struct {
 	Source    []string    `json:"source"`
 	Timestamp []time.Time `json:"timestamp"`
 }
-
 
 type nodeLabels []string
 

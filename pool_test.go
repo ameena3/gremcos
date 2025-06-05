@@ -7,12 +7,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
+	mock_interfaces "github.com/ameena3/gremcos/test/mocks/interfaces"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/supplyon/gremcos/interfaces"
-	mock_interfaces "github.com/supplyon/gremcos/test/mocks/interfaces"
 )
 
 func TestIsConnectedRace(t *testing.T) {

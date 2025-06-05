@@ -1,6 +1,6 @@
 package api
 
-import "github.com/supplyon/gremcos/interfaces"
+import "github.com/ameena3/gremcos/interfaces"
 
 // ResponseArray an array type for responses
 type ResponseArray []interfaces.Response

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 type vertex struct {

@@ -2,20 +2,23 @@ package gremcos
 
 import (
 	"fmt"
+	"io"
+
 	"go.uber.org/atomic"
-	"io/ioutil"
+
 	"net/http"
 	"strings"
 	"time"
 
 	"sync"
 
-	"github.com/supplyon/gremcos/interfaces"
+	"github.com/ameena3/gremcos/interfaces"
 
 	gorilla "github.com/gorilla/websocket"
 )
 
-// websocket is the dialer for a WebsocketConnection
+// Deprecated: websocket is part of the original websocket-based implementation.
+// Consider using DialGremlinGo which utilizes the gremlin-go driver.
 type websocket struct {
 	// the host to establish the connection with
 	// it is expected to specify the protocol as part of the host
@@ -53,7 +56,8 @@ type websocket struct {
 	wsDialerFactory websocketDialerFactory
 }
 
-// NewWebsocket returns a WebSocket dialer to use when connecting to Gremlin Server
+// Deprecated: NewWebsocket is part of the original websocket-based implementation.
+// Consider using DialGremlinGo which utilizes the gremlin-go driver.
 func NewWebsocket(host string, options ...optionWebsocket) (interfaces.Dialer, error) {
 	createdWebsocket := &websocket{
 		timeout:         5 * time.Second,
@@ -72,19 +76,19 @@ func NewWebsocket(host string, options ...optionWebsocket) (interfaces.Dialer, e
 
 	// verify setup and fail as early as possible
 	if !strings.HasPrefix(createdWebsocket.host, "ws://") && !strings.HasPrefix(createdWebsocket.host, "wss://") {
-		return nil, fmt.Errorf("Host '%s' is invalid, expected protocol 'ws://' or 'wss://' missing", createdWebsocket.host)
+		return nil, fmt.Errorf("host '%s' is invalid, expected protocol 'ws://' or 'wss://' missing", createdWebsocket.host)
 	}
 
 	if createdWebsocket.readBufSize <= 0 {
-		return nil, fmt.Errorf("Invalid size for read buffer: %d", createdWebsocket.readBufSize)
+		return nil, fmt.Errorf("invalid size for read buffer: %d", createdWebsocket.readBufSize)
 	}
 
 	if createdWebsocket.writeBufSize <= 0 {
-		return nil, fmt.Errorf("Invalid size for write buffer: %d", createdWebsocket.writeBufSize)
+		return nil, fmt.Errorf("invalid size for write buffer: %d", createdWebsocket.writeBufSize)
 	}
 
 	if createdWebsocket.wsDialerFactory == nil {
-		return nil, fmt.Errorf("The factory for websocket dialers is nil")
+		return nil, fmt.Errorf("the factory for websocket dialers is nil")
 	}
 
 	return createdWebsocket, nil
@@ -136,7 +140,7 @@ func extractConnectionError(resp *http.Response) error {
 		return errMinimal
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errMinimal
 	}

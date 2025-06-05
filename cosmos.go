@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/rs/zerolog"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 // Cosmos is an abstraction of the CosmosDB
@@ -72,6 +72,7 @@ type cosmosImpl struct {
 	maxRetries int
 	// defines the max duration a request should be retried
 	retryTimeout time.Duration
+	useGremlinGoDriver bool // Added for gremlin-go driver
 }
 
 type websocketGeneratorFun func(host string, options ...optionWebsocket) (interfaces.Dialer, error)
@@ -89,15 +90,27 @@ func WithAuth(username string, password string) Option {
 	}
 }
 
+// WithGremlinGo enables the use of the gremlin-go driver instead of the native websocket.
+// This will change how connections and queries are handled internally.
+func WithGremlinGo() Option {
+	return func(c *cosmosImpl) {
+		c.useGremlinGoDriver = true
+	}
+}
+
 // WithResourceTokenAuth sets credential provider that is used to authenticate the requests to cosmos.
 // With this approach dynamic credentials (cosmos resource tokens) can be used for authentication.
 // To do this you have to provide a CredentialProvider implementation that takes care for providing a valid (not yet expired) resource token
+//
 //	myResourceTokenProvider := MyDynamicCredentialProvider{}
 //	New("wss://example.com", WithResourceTokenAuth(myResourceTokenProvider))
 //
 // If you want to use static credentials (primary-/ secondary cosmos key as password) instead you can either use "WithAuth".
+//
 //	New("wss://example.com", WithAuth("username","primary-key"))
+//
 // Or you use the default implementation for a static credential provider "StaticCredentialProvider"
+//
 //	staticCredProvider := StaticCredentialProvider{UsernameStatic: "username", PasswordStatic: "primary-key"}
 //	New("wss://example.com", WithResourceTokenAuth(staticCredProvider))
 func WithResourceTokenAuth(credentialProvider CredentialProvider) Option {
@@ -166,7 +179,8 @@ func wsGenerator(wsGenerator websocketGeneratorFun) Option {
 // AutomaticRetries tries to retry failed requests, if appropriate. Retries are limited to maxRetries. Retrying is stopped after timeout is reached.
 // Appropriate error codes are 409, 412, 429, 1007, 1008 see https://docs.microsoft.com/en-us/azure/cosmos-db/graph/gremlin-headers#status-codes
 // Hint: Be careful when specifying the values for maxRetries and timeout. They influence how much latency is added on requests that need to be retried.
-//       For example if maxRetries = 1 and timeout = 1s the call might take 1s longer to return a potential persistent error.
+//
+//	For example if maxRetries = 1 and timeout = 1s the call might take 1s longer to return a potential persistent error.
 func AutomaticRetries(maxRetries int, timeout time.Duration) Option {
 	return func(c *cosmosImpl) {
 		if maxRetries > 0 {
@@ -231,16 +245,46 @@ func New(host string, options ...Option) (Cosmos, error) {
 
 // dial creates new connections. It is called by the pool in case a new connection is demanded.
 func (c *cosmosImpl) dial() (interfaces.QueryExecutor, error) {
+	if c.useGremlinGoDriver {
+		c.logger.Info().Msg("CosmosDB client is dialing using Gremlin-Go driver")
+		var gremlinGoOptions []GremlinGoClientOption
 
-	// create a new websocket dialer to avoid using the same websocket connection for
-	// multiple queries at the same time
-	// use default settings (timeout, buffersizes etc.) for the websocket
+		if c.credentialProvider != nil {
+			// CredentialProvider from auth.go is compatible with gremlingo_client.WithGremlinGoAuth
+			gremlinGoOptions = append(gremlinGoOptions, WithGremlinGoAuth(c.credentialProvider))
+		}
+		// TODO: Map other relevant cosmosImpl settings (like queryTimeout, specific logger settings for the driver if different from wrapper)
+		// to GremlinGoClientOption if applicable and if GremlinGoClient supports them.
+		// Example: if a specific traversal source for cosmos was configurable, it would be passed here.
+		// gremlinGoOptions = append(gremlinGoOptions, WithGremlinGoTraversalSource("g")) // Default or from config
+
+		// c.host is expected to be the websocket URL, e.g., "ws://localhost:8182/gremlin"
+		// DialGremlinGo is defined in gremlingo_client.go
+		return DialGremlinGo(c.host, gremlinGoOptions...)
+	}
+
+	// Existing logic for native websocket client
+	c.logger.Info().Msg("CosmosDB client is dialing using native websocket client")
 	dialer, err := c.websocketGenerator(c.host, SetWritingWait(c.writeTimeout), SetReadingWait(c.readTimeout))
 	if err != nil {
 		return nil, err
 	}
 
-	return Dial(dialer, c.errorChannel, SetAuth(c.credentialProvider), PingInterval(time.Second*30), WithMetrics(c.metrics))
+	var originalClientOptions []clientOption // clientOption is defined in client.go
+	if c.credentialProvider != nil {
+		// SetAuth is a clientOption from client.go
+		originalClientOptions = append(originalClientOptions, SetAuth(c.credentialProvider))
+	}
+	// Default ping interval for the old client.
+	originalClientOptions = append(originalClientOptions, PingInterval(time.Second*30))
+	if c.metrics != nil {
+		// WithMetrics is a clientOption from client.go
+		originalClientOptions = append(originalClientOptions, WithMetrics(c.metrics))
+	}
+	// Add other options relevant to the old client if they were configured on cosmosImpl.
+
+	// Dial is from client.go
+	return Dial(dialer, c.errorChannel, originalClientOptions...)
 }
 
 func (c *cosmosImpl) ExecuteQuery(query interfaces.QueryBuilder) ([]interfaces.Response, error) {

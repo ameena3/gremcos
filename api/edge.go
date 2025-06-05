@@ -1,8 +1,8 @@
 package api
 
 import (
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/pkg/errors"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 type edge struct {
@@ -96,6 +96,7 @@ func (e *edge) Where(where interfaces.QueryBuilder) interfaces.Edge {
 // e.g. .has("temperature",23.02) or .has("available",true)
 // The method can also be used to return edges that have a certain property.
 // Then .has("<prop name>") will be added to the query.
+//
 //	e.Has("prop1")
 func (e *edge) Has(key string, value ...interface{}) interfaces.Edge {
 	if len(value) == 0 {
@@ -110,7 +111,7 @@ func (e *edge) Has(key string, value ...interface{}) interfaces.Edge {
 	return e.Add(NewSimpleQB(".has%s", keyVal))
 }
 
-//  Not adds .not(<traversal>) to the query.
+// Not adds .not(<traversal>) to the query.
 func (e *edge) Not(not interfaces.QueryBuilder) interfaces.Edge {
 	return e.Add(NewSimpleQB(".not(%s)", not))
 }

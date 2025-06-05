@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"testing"
 
+	mock_interfaces "github.com/ameena3/gremcos/test/mocks/interfaces"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	mock_interfaces "github.com/supplyon/gremcos/test/mocks/interfaces"
 )
 
 // TestRequestPreparation tests the ability to package a query and a set of bindings into a request struct for further manipulation

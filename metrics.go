@@ -3,9 +3,9 @@ package gremcos
 import (
 	"sync"
 
+	m "github.com/ameena3/gremcos/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	m "github.com/supplyon/gremcos/metrics"
 )
 
 // Metrics represents the collection of metrics internally set by the service.

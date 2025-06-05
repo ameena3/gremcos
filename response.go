@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/supplyon/gremcos/interfaces"
+	"github.com/ameena3/gremcos/interfaces"
 )
 
+// Deprecated: handleResponse is part of the original websocket-based client's response processing logic.
+// The gremlin-go driver handles response processing internally.
 func (c *client) handleResponse(msg []byte) error {
 	resp, err := marshalResponse(msg)
 
@@ -20,6 +22,8 @@ func (c *client) handleResponse(msg []byte) error {
 }
 
 // marshalResponse creates a response struct for every incoming response for further manipulation
+// Deprecated: marshalResponse is specific to the original websocket client's message deserialization.
+// The gremlin-go driver provides structured results directly.
 func marshalResponse(msg []byte) (interfaces.Response, error) {
 	resp := interfaces.Response{}
 	err := json.Unmarshal(msg, &resp)
@@ -32,6 +36,8 @@ func marshalResponse(msg []byte) (interfaces.Response, error) {
 }
 
 // saveResponse makes the response available for retrieval by the requester. Mutexes are used for thread safety.
+// Deprecated: saveResponse is part of the original websocket-based client's internal response management.
+// The gremlin-go client maps results directly.
 func (c *client) saveResponse(resp interfaces.Response, err error) {
 	c.mux.Lock()
 	defer c.mux.Unlock()
@@ -67,6 +73,8 @@ func (c *client) saveResponse(resp interfaces.Response, err error) {
 }
 
 // retrieveResponseAsync retrieves the response saved by saveResponse and send the retrieved repose to the channel .
+// Deprecated: retrieveResponseAsync is part of the original websocket-based client's asynchronous response handling.
+// The GremlinGoClient.ExecuteAsync has its own implementation.
 func (c *client) retrieveResponseAsync(id string, responseChannel chan interfaces.AsyncResponse) {
 	var responseProcessedIndex int
 	responseNotifier, _ := c.responseNotifier.Load(id)
@@ -137,6 +145,8 @@ func emptyIfNilOrError(err error) string {
 }
 
 // retrieveResponse retrieves the response saved by saveResponse.
+// Deprecated: retrieveResponse is part of the original websocket-based client's synchronous response handling.
+// The GremlinGoClient.Execute and ExecuteWithBindings have their own implementations.
 func (c *client) retrieveResponse(id string) ([]interfaces.Response, error) {
 
 	var responseErrorChannel *safeCloseErrorChannel
@@ -190,6 +200,7 @@ func (c *client) retrieveResponse(id string) ([]interfaces.Response, error) {
 }
 
 // deleteResponse deletes the response from the container. Used for cleanup purposes by requester.
+// Deprecated: deleteResponse is part of the original websocket-based client's internal response management.
 func (c *client) deleteResponse(id string) {
 	c.results.Delete(id)
 }

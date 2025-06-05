@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ameena3/gremcos/interfaces"
 	"github.com/stretchr/testify/require"
-	"github.com/supplyon/gremcos/interfaces"
 )
 
 var failingErrorChannelConsumerFunc = func(errChan chan error, t *testing.T) {
